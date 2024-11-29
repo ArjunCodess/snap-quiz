@@ -11,111 +11,98 @@ export async function strict_output(
   system_prompt: string,
   user_prompt: string | string[],
   output_format: OutputFormat,
-  default_category: string = "",
-  output_value_only: boolean = false,
-  model: string = "gemini-1.5-flash", // Changed default model to Gemini 1.5 Flash
-  temperature: number = 1,
+  model: string = "gemini-pro",
+  temperature: number = 0.7,
   num_tries: number = 3,
-  verbose: boolean = false
-): Promise<{
-  question: string;
-  answer: string;
-}[]> {
-  // Initialize the model
+  verbose: boolean = true
+): Promise<OutputFormat[]> {
   const geminiModel: GenerativeModel = genAI.getGenerativeModel({ model: model });
-
   const list_input: boolean = Array.isArray(user_prompt);
-  const dynamic_elements: boolean = /<.*?>/.test(JSON.stringify(output_format));
-  const list_output: boolean = /\[.*?\]/.test(JSON.stringify(output_format));
-
   let error_msg: string = "";
 
   for (let i = 0; i < num_tries; i++) {
-    let output_format_prompt: string = `\nYou are to output the following in json format: ${JSON.stringify(
-      output_format
-    )}. \nDo not put quotation marks or escape character \\ in the output fields.`;
-
-    if (list_output) {
-      output_format_prompt += `\nIf output field is a list, classify output into the best element of the list.`;
-    }
-
-    if (dynamic_elements) {
-      output_format_prompt += `\nAny text enclosed by < and > indicates you must generate content to replace it. Example input: Go to <location>, Example output: Go to the garden\nAny output key containing < and > indicates you must generate the key name to replace it. Example input: {'<location>': 'description of location'}, Example output: {school: a place for education}`;
-    }
-
-    if (list_input) {
-      output_format_prompt += `\nGenerate a list of json, one json for each input element.`;
-    }
-
     try {
-      // Generate content using Gemini
-      const prompt = system_prompt + output_format_prompt + error_msg + "\n" + user_prompt.toString();
+      const formatInstructions = `
+        RESPONSE FORMAT REQUIREMENTS:
+        1. Respond ONLY with a valid JSON array containing ${list_input ? 'multiple objects' : 'a single object'}
+        2. Each object must exactly follow this structure: ${JSON.stringify(output_format)}
+        3. Format Rules:
+           - Use proper JSON syntax with double quotes for keys and string values
+           - No trailing commas
+           - No comments or additional text outside the JSON
+           - All text responses must be under 15 words
+           - Ensure each key exactly matches the specified format
+        4. Example format:
+           [
+             {
+               "question": "Your question here?",
+               "answer": "The correct answer here",
+               ${output_format.hasOwnProperty('option1') ? `
+               "option1": "First incorrect option",
+               "option2": "Second incorrect option",
+               "option3": "Third incorrect option"
+               ` : ''}
+             }
+           ]
+        5. Do not include any explanations or text outside the JSON structure
+      `;
+
+      const prompt = `${system_prompt}\n${formatInstructions}\n${error_msg}\nTopic: ${user_prompt.toString()}`;
       
+      if (verbose) {
+        console.log("Sending prompt to Gemini:", prompt);
+      }
+
       const result = await geminiModel.generateContent({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: temperature,
+          maxOutputTokens: 1000,
         },
       });
 
       const response = await result.response;
-      let res: string = response.text().replace(/'/g, '"');
-      res = res.replace(/(\w)"(\w)/g, "$1'$2");
-
-      if (verbose) {
-        console.log("System prompt:", system_prompt + output_format_prompt + error_msg);
-        console.log("\nUser prompt:", user_prompt);
-        console.log("\nGemini response:", res);
+      let res: string = response.text();
+      
+      // Extract JSON from response
+      const jsonMatch = res.match(/\[[\s\S]*\]/) || res.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        res = jsonMatch[0];
       }
 
-      // Parse and validate the response
-      let output = JSON.parse(res);
+      if (verbose) {
+        console.log("Raw Gemini response:", res);
+      }
 
-      if (list_input) {
-        if (!Array.isArray(output)) {
-          throw new Error("Output format not in a list of json");
-        }
-      } else {
+      let output = JSON.parse(res);
+      if (!Array.isArray(output)) {
         output = [output];
       }
 
-      // Validate output format
-      for (let index = 0; index < output.length; index++) {
-        for (const key in output_format) {
-          if (/<.*?>/.test(key)) {
-            continue;
-          }
-
-          if (!(key in output[index])) {
-            throw new Error(`${key} not in json output`);
-          }
-
-          if (Array.isArray(output_format[key])) {
-            const choices = output_format[key] as string[];
-            if (Array.isArray(output[index][key])) {
-              output[index][key] = output[index][key][0];
-            }
-            if (!choices.includes(output[index][key]) && default_category) {
-              output[index][key] = default_category;
-            }
-            if (output[index][key].includes(":")) {
-              output[index][key] = output[index][key].split(":")[0];
-            }
-          }
-        }
-
-        if (output_value_only) {
-          output[index] = Object.values(output[index]);
-          if (output[index].length === 1) {
-            output[index] = output[index][0];
-          }
-        }
+      // Validate output
+      if (output.length === 0) {
+        throw new Error("Empty response received");
       }
 
-      return list_input ? output : output[0];
-    } catch (e) {
-      error_msg = `\n\nError occurred: ${e}`;
-      console.log("An exception occurred:", e);
+      // Validate each object has all required fields
+      output.forEach((item: OutputFormat, index: number) => {
+        for (const key in output_format) {
+          if (!item[key]) {
+            throw new Error(`Missing required field "${key}" in item ${index + 1}`);
+          }
+        }
+      });
+
+      return output;
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      error_msg = `\n\nError in previous attempt: ${errorMessage}. Please try again and ensure the response is valid JSON.`;
+      console.error(`Attempt ${i + 1} failed:`, e);
+      
+      if (i === num_tries - 1) {
+        console.error("All attempts failed");
+        throw e;
+      }
     }
   }
 

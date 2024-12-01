@@ -1,7 +1,7 @@
 "use client";
 
+import React, { useState } from "react";
 import { quizCreationSchema } from "@/schemas";
-import React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,8 +38,8 @@ type Props = {
 type Input = z.infer<typeof quizCreationSchema>;
 
 const QuizCreation = ({ topic: topicParam }: Props) => {
-  const [showLoader, setShowLoader] = React.useState(false);
-  const [finishedLoading, setFinishedLoading] = React.useState(false);
+  const [showLoader, setShowLoader] = useState(false);
+  const [finishedLoading, setFinishedLoading] = useState(false);
 
   const router = useRouter();
   const { toast } = useToast();
@@ -55,9 +55,12 @@ const QuizCreation = ({ topic: topicParam }: Props) => {
   });
 
   const onSubmit = async (data: Input) => {
+    if (isLoading) return; // Prevent multiple submissions
     setShowLoader(true);
     try {
+      console.log('Submitting quiz creation with data:', data);
       const { gameId } = await createQuiz(data);
+      console.log('Quiz created with gameId:', gameId);
       setFinishedLoading(true);
 
       setTimeout(() => {
@@ -68,15 +71,14 @@ const QuizCreation = ({ topic: topicParam }: Props) => {
         }
       }, 2000);
     } catch (error) {
+      console.error('Error creating quiz:', error);
       setShowLoader(false);
       if (error instanceof AxiosError) {
-        if (error.response?.status === 500) {
-          toast({
-            title: "Error",
-            description: "Something went wrong. Please try again later.",
-            variant: "destructive",
-          });
-        }
+        toast({
+          title: "Error",
+          description: error.response?.data?.error || "Something went wrong. Please try again later.",
+          variant: "destructive",
+        });
       }
     }
   };

@@ -2,8 +2,7 @@ import React from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import QuizCreation from "@/components/quiz-creation";
-
-type SearchParams = Promise<{ topic?: string }>;
+import { SearchParams } from "@/types";
 
 interface Props {
   searchParams: SearchParams;

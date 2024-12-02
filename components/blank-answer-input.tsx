@@ -1,12 +1,11 @@
 import React, { Dispatch, Fragment, SetStateAction, useMemo } from "react";
 import keyword_extractor from "keyword-extractor";
+import { OPEN_ENDED_ANSWER_PLACEHOLDER } from "@/lib/utils";
 
 type Props = {
   answer: string;
   setBlankAnswer: Dispatch<SetStateAction<string>>;
 };
-
-const blank = "_______";
 
 const BlankAnswerInput = ({ answer, setBlankAnswer }: Props) => {
   const keywords = useMemo(() => {
@@ -22,31 +21,35 @@ const BlankAnswerInput = ({ answer, setBlankAnswer }: Props) => {
 
   const answerWithBlanks = useMemo(() => {
     const answerWithBlanks = keywords.reduce((acc, curr) => {
-      return acc.replaceAll(curr, blank);
+      return acc.replaceAll(curr, OPEN_ENDED_ANSWER_PLACEHOLDER);
     }, answer);
     setBlankAnswer(answerWithBlanks);
     return answerWithBlanks;
   }, [answer, keywords, setBlankAnswer]);
 
   return (
-    <div className="flex justify-start w-full mt-4">
-      <h1 className="text-xl font-semibold">
-        {answerWithBlanks.split(blank).map((part, index) => {
-          return (
-            <Fragment key={index}>
-              {part}
-              {index === answerWithBlanks.split(blank).length - 1 ? (
-                ""
-              ) : (
-                <input
-                  id="user-blank-input"
-                  className="text-center border-b-2 border-black dark:border-white w-28 focus:border-2 focus:border-b-4 focus:outline-none"
-                  type="text"
-                />
-              )}
-            </Fragment>
-          );
-        })}
+    <div className="w-full max-w-3xl mx-auto px-4">
+      <h1 className="text-xl font-medium text-foreground/90 leading-relaxed">
+        {answerWithBlanks
+          .split(OPEN_ENDED_ANSWER_PLACEHOLDER)
+          .map((part, index) => {
+            return (
+              <Fragment key={index}>
+                {part}
+                {index ===
+                answerWithBlanks.split(OPEN_ENDED_ANSWER_PLACEHOLDER).length -
+                  1 ? (
+                  ""
+                ) : (
+                  <input
+                    id="user-blank-input"
+                    className="mx-1 px-2 py-1 w-32 text-center bg-transparent border-b-2 border-primary/30 focus:border-primary focus:outline-none transition-all duration-200 text-primary"
+                    type="text"
+                  />
+                )}
+              </Fragment>
+            );
+          })}
       </h1>
     </div>
   );

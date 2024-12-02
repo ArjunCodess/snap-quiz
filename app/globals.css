@@ -71,36 +71,15 @@ body {
   }
 }
 
-@keyframes slide {
-  0% {
-    transform: translateY(0);
+@keyframes spin-reverse {
+  from {
+    transform: rotate(0deg);
   }
-  20% {
-    transform: translateY(0);
-  }
-  25% {
-    transform: translateY(-100%);
-  }
-  45% {
-    transform: translateY(-100%);
-  }
-  50% {
-    transform: translateY(-200%);
-  }
-  70% {
-    transform: translateY(-200%);
-  }
-  75% {
-    transform: translateY(-300%);
-  }
-  95% {
-    transform: translateY(-300%);
-  }
-  100% {
-    transform: translateY(-400%);
+  to {
+    transform: rotate(-360deg);
   }
 }
 
-.animate-slide {
-  animation: slide 15s infinite;
+.animate-spin-reverse {
+  animation: spin-reverse 1s linear infinite;
 }

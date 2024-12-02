@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { cn, formatTimeDelta } from "@/lib/utils";
+import { cn, formatTimeDelta, OPEN_ENDED_ANSWER_PLACEHOLDER } from "@/lib/utils";
 import { Game, Question } from "@prisma/client";
 import { differenceInSeconds } from "date-fns";
 import { BarChart, ChevronRight, Loader2, Timer } from "lucide-react";
@@ -48,7 +48,7 @@ const OpenEnded = ({ game }: Props) => {
     document
       .querySelectorAll<HTMLInputElement>("#user-blank-input")
       .forEach((input) => {
-        filledAnswer = filledAnswer.replace("_____", input.value);
+        filledAnswer = filledAnswer.replace(OPEN_ENDED_ANSWER_PLACEHOLDER, input.value);
         input.value = "";
       });
 
@@ -156,7 +156,7 @@ const OpenEnded = ({ game }: Props) => {
         </CardHeader>
       </Card>
 
-      <div className="flex flex-col items-center justify-center w-full my-6">
+      <div className="flex flex-col items-center justify-center w-full my-12">
         <BlankAnswerInput
           setBlankAnswer={setBlankAnswer}
           answer={currentQuestion.answer}

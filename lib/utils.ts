@@ -22,3 +22,5 @@ export function formatTimeDelta(seconds: number): string {
 
   return parts.join(" ");
 }
+
+export const OPEN_ENDED_ANSWER_PLACEHOLDER = "_______";

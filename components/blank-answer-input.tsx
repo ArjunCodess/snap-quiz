@@ -1,4 +1,4 @@
-import React, { Dispatch, Fragment, SetStateAction, useMemo } from "react";
+import React, { Dispatch, Fragment, SetStateAction, useMemo, useEffect } from "react";
 import keyword_extractor from "keyword-extractor";
 import { OPEN_ENDED_ANSWER_PLACEHOLDER } from "@/lib/utils";
 
@@ -23,9 +23,12 @@ const BlankAnswerInput = ({ answer, setBlankAnswer }: Props) => {
     const answerWithBlanks = keywords.reduce((acc, curr) => {
       return acc.replaceAll(curr, OPEN_ENDED_ANSWER_PLACEHOLDER);
     }, answer);
-    setBlankAnswer(answerWithBlanks);
     return answerWithBlanks;
-  }, [answer, keywords, setBlankAnswer]);
+  }, [answer, keywords]);
+
+  useEffect(() => {
+    setBlankAnswer(answerWithBlanks);
+  }, [answerWithBlanks, setBlankAnswer]);
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4">
@@ -37,8 +40,7 @@ const BlankAnswerInput = ({ answer, setBlankAnswer }: Props) => {
               <Fragment key={index}>
                 {part}
                 {index ===
-                answerWithBlanks.split(OPEN_ENDED_ANSWER_PLACEHOLDER).length -
-                  1 ? (
+                answerWithBlanks.split(OPEN_ENDED_ANSWER_PLACEHOLDER).length - 1 ? (
                   ""
                 ) : (
                   <input

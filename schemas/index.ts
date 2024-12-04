@@ -8,16 +8,25 @@ export const quizCreationSchema = z.object({
     })
     .max(50, {
       message: "Topic must be at most 50 characters long",
-    }),
+    })
+    .optional(),
+  content: z.string().optional(),
   type: z.enum(["mcq", "open_ended"]),
   amount: z.number().min(1).max(10),
-});
+}).superRefine(
+  data => (data.topic && !data.content) || (!data.topic && data.content)
+);
+
+export type FormInput = z.infer<typeof quizCreationSchema>;
 
 export const getQuestionsSchema = z.object({
-  topic: z.string(),
+  topic: z.string().optional(),
+  content: z.string().optional(),
   amount: z.number().int().positive().min(1).max(10),
   type: z.enum(["mcq", "open_ended"]),
-});
+}).superRefine(
+  data => (data.topic && !data.content) || (!data.topic && data.content)
+);
 
 export const checkAnswerSchema = z.object({
   userInput: z.string(),

@@ -32,7 +32,7 @@ const BlankAnswerInput = ({ answer, setBlankAnswer }: Props) => {
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4">
-      <h1 className="text-xl font-medium text-foreground/90 leading-relaxed">
+      <h1 className="text-xl font-medium text-foreground/90 leading-loose">
         {answerWithBlanks
           .split(OPEN_ENDED_ANSWER_PLACEHOLDER)
           .map((part, index) => {
@@ -45,7 +45,7 @@ const BlankAnswerInput = ({ answer, setBlankAnswer }: Props) => {
                 ) : (
                   <input
                     id="user-blank-input"
-                    className="mx-1 px-2 py-1 w-32 text-center bg-transparent border-b-2 border-primary/30 focus:border-primary focus:outline-none transition-all duration-200 text-primary"
+                    className="mx-1 px-2 w-32 text-center bg-transparent border-b-2 border-primary/30 focus:border-primary focus:outline-none transition-all duration-200 text-primary leading-normal"
                     type="text"
                   />
                 )}

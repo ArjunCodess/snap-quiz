@@ -30,6 +30,7 @@ import {
 import LoadingQuestions from "./loading-questions";
 import { useToast } from "@/hooks/use-toast";
 import { useCreateQuiz } from "@/hooks/useCreateQuiz";
+import { QuizSourceSelector } from "./quiz-source-selector";
 
 type Props = {
   topic: string;
@@ -48,9 +49,10 @@ const QuizCreation = ({ topic: topicParam }: Props) => {
   const form = useForm<Input>({
     resolver: zodResolver(quizCreationSchema),
     defaultValues: {
-      topic: topicParam,
+      topic: topicParam || undefined,
       type: "mcq",
       amount: 3,
+      content: undefined,
     },
   });
 
@@ -91,28 +93,13 @@ const QuizCreation = ({ topic: topicParam }: Props) => {
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Quiz Creation</CardTitle>
-          <CardDescription>Choose a topic</CardDescription>
+          <CardDescription>Choose your quiz content</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="topic"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Topic</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter a topic" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Please provide any topic you would like to be quizzed on
-                      here.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <QuizSourceSelector form={form} />
+              
               <FormField
                 control={form.control}
                 name="amount"
@@ -141,7 +128,7 @@ const QuizCreation = ({ topic: topicParam }: Props) => {
                   </FormItem>
                 )}
               />
-
+              
               <div className="flex justify-between">
                 <Button
                   variant={

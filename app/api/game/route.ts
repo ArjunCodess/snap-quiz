@@ -14,32 +14,34 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { topic, type, amount } = quizCreationSchema.parse(body);
+    const { topic, content, type, amount } = quizCreationSchema.parse(body);
     
-    console.log("Creating game with:", { topic, type, amount });
-    console.log("API_URL:", process.env.API_URL);
+    console.log("Creating game with:", { topic, content, type, amount });
+    console.log("API_URL:", process.env.NEXT_PUBLIC_API_URL);
 
     const game = await prisma.game.create({
       data: {
         gameType: type,
         timeStarted: new Date(),
         userId: userId,
-        topic,
+        topic: topic || `${content!.slice(0, 7)}...` || "Generated from Content",
       },
     });
     
     console.log("Game created:", game.id);
     
-    await prisma.topicCount.upsert({
-      where: { topic },
-      create: { topic, count: 1 },
-      update: { count: { increment: 1 } },
-    });
+    if (topic) {
+      await prisma.topicCount.upsert({
+        where: { topic },
+        create: { topic, count: 1 },
+        update: { count: { increment: 1 } },
+      });
+    }
 
     try {
       const { data } = await axios.post(
-        `${process.env.API_URL as string}/api/questions`,
-        { amount, topic, type }
+        `${process.env.NEXT_PUBLIC_API_URL as string}/api/questions`,
+        { amount, topic, content, type }
       );
       
       console.log("Questions API response:", data);

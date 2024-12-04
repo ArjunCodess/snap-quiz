@@ -7,8 +7,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Flame } from "lucide-react";
+import WordCloud from "../word-cloud";
+import { prisma } from "@/lib/db";
 
 export default async function HotTopicsCard() {
+  const topics = await prisma.topicCount.findMany({});
+
+  const formattedTopics = topics.map((topic) => {
+    return {
+      text: topic.topic,
+      value: topic.count,
+    };
+  });
+
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -17,13 +28,12 @@ export default async function HotTopicsCard() {
           <Flame className="h-6 w-6 text-orange-500" />
         </div>
         <CardDescription>
-          Popular topics from our quiz community. Click any topic to start a quiz.
+          Popular topics from our quiz community. Click any topic to start a
+          quiz.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="bg-card/50 rounded-lg p-4 min-h-[200px] flex items-center justify-center">
-          word cloud
-        </div>
+      <CardContent className="pl-2">
+        <WordCloud formattedTopics={formattedTopics} />
       </CardContent>
     </Card>
   );

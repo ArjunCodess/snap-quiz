@@ -10,6 +10,8 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Clock } from "lucide-react";
+import History from "../history";
+import { prisma } from "@/lib/db";
 
 export default async function RecentActivities() {
   const { userId } = await auth();
@@ -17,6 +19,12 @@ export default async function RecentActivities() {
   if (!userId) {
     redirect("/");
   }
+
+  const games_count = await prisma.game.count({
+    where: {
+      userId: userId,
+    },
+  });
 
   return (
     <Card className="col-span-4 lg:col-span-3">
@@ -32,13 +40,12 @@ export default async function RecentActivities() {
           </div>
         </div>
         <CardDescription>
-          Track your quiz history and performance
+          Yay! You have completed {games_count} quizzes.
         </CardDescription>
       </CardHeader>
-      <CardContent className="max-h-[580px] overflow-y-auto scrollbar-thin scrollbar-thumb-secondary">
-        <div className="flex flex-col gap-2 items-center justify-center min-h-[200px] text-muted-foreground">
-          <Clock className="h-8 w-8 mb-2" />
-          <p>No recent activities</p>
+      <CardContent className="max-h-[480px] overflow-y-auto scrollbar-thin scrollbar-thumb-secondary">
+        <div className="flex flex-col gap-2 items-center justify-center text-muted-foreground">
+          <History limit={10} userId={userId} className="col-span-1 md:grid-cols-1 lg:grid-cols-1 w-full" />
         </div>
       </CardContent>
     </Card>

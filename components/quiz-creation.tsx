@@ -89,7 +89,7 @@ const QuizCreation = ({ topic: topicParam }: Props) => {
   if (showLoader) return <LoadingQuestions finished={finishedLoading} />;
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-65px)] px-2">
+    <div className="flex justify-center items-center min-h-[calc(100vh-65px)] px-2 py-8">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Quiz Creation</CardTitle>

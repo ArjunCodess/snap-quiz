@@ -21,9 +21,9 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="container py-8">
+    <div className="container px-4 py-8">
       <div className="flex items-center">
-        <h2 className="mr-2 text-3xl font-bold tracking-tight">Dashboard</h2>
+        <h2 className="mr-2 text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h2>
       </div>
 
       <div className="grid gap-4 mt-4 md:grid-cols-2">

@@ -24,10 +24,10 @@ export default async function HotTopicsCard() {
     <Card className="col-span-4">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle className="text-2xl font-bold">Hot Topics</CardTitle>
-          <Flame className="h-6 w-6 text-orange-500" />
+          <CardTitle className="text-xl sm:text-2xl font-bold">Hot Topics</CardTitle>
+          <Flame className="h-5 w-5 sm:h-6 sm:w-6 text-orange-500" />
         </div>
-        <CardDescription>
+        <CardDescription className="text-xs sm:text-sm">
           Popular topics from our quiz community. Click any topic to start a
           quiz.
         </CardDescription>

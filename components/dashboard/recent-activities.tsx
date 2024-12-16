@@ -32,14 +32,14 @@ export default async function RecentActivities() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Link href="/history">
-              <CardTitle className="text-2xl font-bold hover:text-primary transition-colors">
+              <CardTitle className="text-xl sm:text-2xl font-bold hover:text-primary transition-colors">
                 Recent Activity
               </CardTitle>
             </Link>
-            <Clock className="h-5 w-5 text-muted-foreground" />
+            <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
           </div>
         </div>
-        <CardDescription>
+        <CardDescription className="text-xs sm:text-sm">
           Yay! You have completed {games_count} quizzes.
         </CardDescription>
       </CardHeader>

@@ -24,7 +24,7 @@ export async function POST(req: Request) {
         gameType: type,
         timeStarted: new Date(),
         userId: userId,
-        topic: topic || `${content!.slice(0, 7)}...` || "Generated from Content",
+        topic: topic || `${content!.slice(0, 15)}...` || "Generated from Content",
       },
     });
     

@@ -24,14 +24,14 @@ const ResultsCard = ({ accuracy }: Props) => {
   return (
     <Card className="md:col-span-1 relative overflow-hidden group hover:shadow-lg transition-all duration-300 dark:bg-neutral-900/50 h-full">
       <div className="flex flex-col h-full">
-        <CardHeader className="flex flex-row items-center justify-between pb-6 space-y-0">
-          <CardTitle className="text-2xl font-bold">Results</CardTitle>
-          <Award className="w-7 h-7 text-primary" />
+        <CardHeader className="flex flex-row items-center justify-between pb-4 sm:pb-6 space-y-0">
+          <CardTitle className="text-xl sm:text-2xl font-bold">Results</CardTitle>
+          <Award className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
         </CardHeader>
         <CardContent className="flex-1 flex items-center justify-center">
-          <div className="space-y-3 text-center">
-            <h3 className="text-3xl font-bold">{message.text}</h3>
-            <p className="text-base text-muted-foreground leading-relaxed w-[250px] mx-auto">
+          <div className="space-y-2 sm:space-y-3 text-center">
+            <h3 className="text-2xl sm:text-3xl font-bold">{message.text}</h3>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed w-[90%] sm:w-[250px] mx-auto">
               {accuracy >= 80
                 ? "You've mastered this quiz! Brilliant performance!"
                 : accuracy >= 60

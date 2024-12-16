@@ -61,10 +61,10 @@ const Statistics = async ({ params }: PageProps) => {
   accuracy = Math.round(accuracy * 100) / 100;
 
   return (
-    <section className="min-h-screen py-10">
+    <section className="min-h-screen py-6 sm:py-10">
       <div className="container px-4 mx-auto max-w-7xl">
-        <div className="mb-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold mb-2">
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
+          <h1 className="text-2xl sm:text-3xl font-bold">
             Statistics for{" "}
             <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
               {game.gameType === "mcq" ? "Multiple Choice" : "Open-Ended"}:{" "}
@@ -75,22 +75,23 @@ const Statistics = async ({ params }: PageProps) => {
             href="/dashboard"
             className={buttonVariants({
               variant: "outline",
+              size: "sm",
               className:
-                "hover:bg-primary hover:text-primary-foreground transition-all duration-200 shadow-sm",
+                "text-sm sm:text-base hover:bg-primary hover:text-primary-foreground transition-all duration-200 shadow-sm w-full sm:w-auto",
             })}
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="sm:w-4 h-5 mr-2 w-full" />
             Back to Dashboard
           </Link>
         </div>
-        <Card className="mb-8">
+        <Card className="mb-6 sm:mb-8">
           <CardHeader className="pb-2">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-2">
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary/80 to-primary bg-clip-text text-transparent">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
+              <div className="space-y-1 sm:space-y-2">
+                <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary/80 to-primary bg-clip-text text-transparent">
                   Game Summary
                 </CardTitle>
-                <CardDescription className="text-sm">
+                <CardDescription className="text-xs sm:text-sm">
                   Review your performance for the{" "}
                   {game.gameType === "mcq" ? "Multiple Choice" : "Open-Ended"}{" "}
                   quiz
@@ -99,7 +100,7 @@ const Statistics = async ({ params }: PageProps) => {
             </div>
           </CardHeader>
           <CardContent className="pb-8">
-            <div className="grid gap-8 mt-4 md:grid-cols-3">
+            <div className="grid gap-6 sm:gap-8 mt-4 md:grid-cols-3">
               <ResultsCard accuracy={accuracy} />
               <AccuracyCard accuracy={accuracy} />
               <TimeTakenCard
@@ -112,11 +113,11 @@ const Statistics = async ({ params }: PageProps) => {
 
         <Card>
           <CardHeader className="pb-0">
-            <div className="space-y-2">
-              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary/80 to-primary bg-clip-text text-transparent">
+            <div className="space-y-1 sm:space-y-2">
+              <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary/80 to-primary bg-clip-text text-transparent">
                 Question Review
               </CardTitle>
-              <CardDescription className="text-sm">
+              <CardDescription className="text-xs sm:text-sm">
                 Analyze your responses and learn from your mistakes
               </CardDescription>
             </div>

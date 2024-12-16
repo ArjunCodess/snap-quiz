@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { cn, formatTimeDelta, OPEN_ENDED_ANSWER_PLACEHOLDER } from "@/lib/utils";
+import {
+  cn,
+  formatTimeDelta,
+  OPEN_ENDED_ANSWER_PLACEHOLDER,
+} from "@/lib/utils";
 import { Game, Question } from "@prisma/client";
 import { differenceInSeconds } from "date-fns";
 import { BarChart, ChevronRight, Loader2, Timer } from "lucide-react";
@@ -48,7 +52,10 @@ const OpenEnded = ({ game }: Props) => {
     document
       .querySelectorAll<HTMLInputElement>("#user-blank-input")
       .forEach((input) => {
-        filledAnswer = filledAnswer.replace(OPEN_ENDED_ANSWER_PLACEHOLDER, input.value);
+        filledAnswer = filledAnswer.replace(
+          OPEN_ENDED_ANSWER_PLACEHOLDER,
+          input.value
+        );
         input.value = "";
       });
 
@@ -123,19 +130,16 @@ const OpenEnded = ({ game }: Props) => {
   }
 
   return (
-    <div className="absolute -translate-x-1/2 -translate-y-1/2 md:w-[80vw] max-w-4xl w-[90vw] top-1/2 left-1/2">
+    <div className="mx-auto max-w-4xl w-full top-1/2 left-1/2 px-4 py-8">
       <div className="flex flex-row justify-between">
         <div className="flex flex-col">
-          {/* topic */}
           <p>
-            <span className="text-neutral-400">Topic</span> &nbsp;
-            <span className="px-2 py-1 text-white rounded-lg bg-neutral-800">
-              {game.topic}
-            </span>
+            <span className="text-sm sm:text-base">Topic: </span>
+            <span className="text-sm sm:text-base font-semibold">{game.topic}</span>
           </p>
-          <div className="flex self-start mt-3 text-neutral-400">
-            <Timer className="mr-2" />
-            {formatTimeDelta(differenceInSeconds(now, game.timeStarted))}
+          <div className="flex items-center gap-2">
+            <Timer className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            <p className="text-sm sm:text-base font-medium">{formatTimeDelta(differenceInSeconds(now, game.timeStarted))}</p>
           </div>
         </div>
         <OpenEndedPercentage percentage={averagePercentage} />
@@ -143,14 +147,14 @@ const OpenEnded = ({ game }: Props) => {
       <Card className="w-full mt-4">
         <CardHeader className="flex flex-row items-center gap-6">
           <CardTitle className="flex flex-col items-center justify-center min-w-[60px] text-center">
-            <div className="text-2xl font-bold">
+            <div className="text-xl sm:text-2xl font-bold">
               {questionIndex + 1}
-              <span className="text-neutral-500 text-lg">
+              <span className="text-neutral-500 text-base sm:text-lg">
                 /{game.questions.length}
               </span>
             </div>
           </CardTitle>
-          <CardDescription className="flex-grow text-xl font-medium leading-relaxed">
+          <CardDescription className="flex-grow text-base sm:text-xl font-medium leading-relaxed">
             {currentQuestion?.question}
           </CardDescription>
         </CardHeader>
